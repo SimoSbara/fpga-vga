@@ -5,6 +5,9 @@ This is a beginner project using [Tang Nano 9K](https://wiki.sipeed.com/hardware
 
 ![](https://github.com/SimoSbara/fpga-vga/blob/main/timing_27mhz.png)
 
+## Demo
+![](https://github.com/SimoSbara/fpga-vga/blob/main/demo.jpg)
+
 ## Circuit Scheme
 ![](https://github.com/SimoSbara/fpga-vga/blob/main/schematics.png)
 
