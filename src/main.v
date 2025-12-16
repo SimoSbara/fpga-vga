@@ -7,31 +7,32 @@ module main (
     output wire blue
 );
 
-reg [9:0] line_counter = 0;
-reg [9:0] lines = 0;
 
-localparam [9:0] width = 10'd540;
-localparam [9:0] height = 10'd600;
-localparam [9:0] h1 = 10'd200;
-localparam [9:0] h2 = 10'd400;
-localparam [9:0] h3 = height;
+wire [10:0] x;
+wire [10:0] y;
+reg [7:0] frame = 0;
 
-assign hsync = (line_counter < 10'd567) | (line_counter > 10'd653);
-assign vsync = (lines < 10'd601) | (lines > 10'd605);
-assign red = (lines < h1) & (line_counter < width);
-assign green = (lines >= h1 & lines < h2) & (line_counter < width);
-assign blue = (lines >= h2 & lines < h3) & (line_counter < width);
+localparam [10:0] width = 1200;
+//localparam [10:0] width = 540;
+localparam [10:0] height = 600;
 
-always @(posedge sys_clk) begin
-    if (line_counter == 10'd712) begin
-        line_counter <= 0;
-        lines <= lines + 1;
-        if(lines == 10'd628)
-            lines <= 0;
-    end
-    else
-        line_counter <= line_counter + 1;
-end
+localparam [10:0] rect_xstart = 10'd200;
+localparam [10:0] rect_xend = 10'd500;
+localparam [9:0] rect_ystart = 10'd200;
+localparam [9:0] rect_yend = 10'd400;
 
+wire square = (x > rect_xstart & x < rect_xend) & (y > rect_ystart & y < rect_yend);
+wire out = (x >= width) | (y >= height);
+
+assign red = square;
+assign green = !square & !out;
+assign blue = !square & !out;
+
+//wire clk = sys_clk;
+//vga_800x600_60hz #(.MUL(675), .DIV(1000)) vga_27mhz(.clk(sys_clk), .hsync(hsync), .vsync(vsync), .x(x), .y(y));
+
+wire clk;
+Gowin_rPLL_60mhz ppl(.clkout(clk), .clkin(sys_clk));
+vga_800x600_60hz #(.MUL(3), .DIV(2)) vga_60mhz(.clk(clk), .hsync(hsync), .vsync(vsync), .x(x), .y(y));
 
 endmodule
